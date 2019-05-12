@@ -1,0 +1,485 @@
+<ui:composition template="/WEB-INF/templateB.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="gridDados">
+		<p:panel style="border: none" header="Aluno"
+			rendered="#{!alunoController.podeConsultar()}">
+			<p:outputLabel value="Você não possui acesso a esta função" />
+		</p:panel>
+
+		<p:outputPanel id="outputPanelGrid">
+
+			<p:outputPanel rendered="#{alunoController.telaGrid}">
+
+				<p:panel id="panelCentroGrid" style="border: none" header="aluno"
+					rendered="#{alunoController.podeConsultar()}">
+
+					<p:dataTable id="dataTableAluno" var="obj"
+						value="#{alunoController.dataModel}" paginator="true" rows="10"
+						widgetVar="dataTableAluno"
+						rowsPerPageTemplate="5,10,15,20"
+						selection="#{alunoController.objetoSelecionado}"
+						selectionMode="single" resizableColumns="true" lazy="true">
+
+						<f:facet name="header">
+							<p:commandButton title="Novo" icon="ui-icon-plus"
+								actionListener="#{alunoController.incluir()}"
+								update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"
+								disabled="#{!alunoController.podeInserir()}" />
+							<p:commandButton process="dataTableAluno" title="Detalhes"
+								icon="ui-icon-zoom-in"
+								actionListener="#{alunoController.alterar()}"
+								update=":form1:outputPanelGrid,:form1:outputPanelDetalhe" />
+							<!--                             <p:commandButton value="imprimir"  -->
+							<!--                                              actionListener="#{imprimirAluno.emitir()}" -->
+							<!--                                              update=":form1:outputPanelGrid,:form1:outputPanelDetalhe" ajax="false" /> -->
+							<p:commandButton process="dataTableAluno" title="Excluir"
+								icon="ui-icon-trash"
+								actionListener="#{alunoController.excluir()}"
+								update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"
+								disabled="#{!alunoController.podeExcluir()}">
+								<p:confirm header="Confirmação" message="Confirma Exclusão?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							
+							 <p:outputPanel style="width: 20%; float: left;" >
+                                <p:outputPanel style="width: 80%; float: left;color:#F5F5DC">
+                                    <p:inputText id="globalFilter" placeholder="Pesquisar..." style="color:#F5F5DC" />
+                                </p:outputPanel>
+                                <p:outputPanel style="width: 20%; float: right;" >
+                                    <p:commandButton type="button" icon="ui-icon-search" onclick="PF('dataTableAluno').filter()" />
+                                </p:outputPanel>
+                            </p:outputPanel>   
+							
+						</f:facet>
+
+						<p:column headerText="Nome" >
+							<h:outputLabel value="#{obj.nome}" />
+						</p:column>
+						<p:column headerText="Matricula">
+							<h:outputLabel value="#{obj.nmatricula}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:outputPanel>
+
+		</p:outputPanel>
+
+	</ui:define>
+
+	<ui:define name="telaInclusaoAlteracao" id="telaDetalhe">
+
+		<p:outputPanel id="outputPanelDetalhe">
+
+			<p:outputPanel id="pnl1" rendered="#{!alunoController.telaGrid}">
+				<p:panel id="panelCentroDetalhe" style="border: none" header="Aluno">
+
+					<p:outputLabel value="Nenhum registro selecionado."
+						rendered="#{empty alunoController.objeto}" />
+					<p:commandButton value="Voltar"
+						actionListener="#{alunoController.voltar()}"
+						update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"
+						rendered="#{empty alunoController.objeto}" />
+					<f:facet name="header">
+						<p:commandButton value="imprimir"
+							actionListener="#{alunoController.emitir()}"
+							update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"
+							ajax="false" style="background-color:#FF0000" />
+					</f:facet>
+
+					<p:spacer />
+
+					<p:tabView id="tab"  tabindex="true" onTabShow="widgetVar.selected(0)" >
+						<p:tab title="Informações do Aluno" >
+							<p:outputPanel rendered="#{not empty alunoController.objeto}">
+								<p:panelGrid columns="4">
+									<p:outputLabel value="Nome" />
+									<p:inputText value="#{alunoController.objeto.nome}" size="50" />
+
+									<p:outputLabel value="Matricula" />
+									<p:inputText value="#{alunoController.objeto.nmatricula}" />
+
+									<p:outputLabel value="Data Matricula" />
+									<p:calendar pattern="dd/MM/yyyy" mask="99/99/9999"
+									value="#{alunoController.objeto.dataMatricula}" />
+
+									<p:outputLabel value="Data Nascimento" />
+									<p:calendar pattern="dd/MM/yyyy" mask="99/99/9999"
+									value="#{alunoController.objeto.dataNascimento}" />
+
+									<p:outputLabel value="Grupo" />
+									<p:inputText value="#{alunoController.objeto.grupo}" />
+
+									<p:outputLabel value="Turno" />
+									<p:inputText value="#{alunoController.objeto.turno}" />
+
+								</p:panelGrid>
+								<h1>Documentos</h1>
+								<p:panelGrid columns="4">
+									<p:outputLabel value="Certidão" />
+									<p:inputText value="#{alunoController.objeto.certidao}" />
+
+									<p:outputLabel value="Cartorio" />
+									<p:inputText value="#{alunoController.objeto.CARTORIO}" />
+
+									<p:outputLabel value="Termo" />
+									<p:inputText value="#{alunoController.objeto.termo}" />
+
+									<p:outputLabel value="Numero RG" />
+									<p:inputText value="#{alunoController.objeto.rg_numero}" />
+
+									<p:outputLabel value="Orgão emissor" />
+									<p:inputText value="#{alunoController.objeto.rg_orgao}" />
+
+									<p:outputLabel value="Data Emissão RG" />
+									<p:calendar pattern="dd/MM/yyyy" mask="99/99/9999"
+									value="#{alunoController.objeto.rg_dataemissao}" />
+
+									<p:outputLabel value="Numero CPF" />
+									<p:inputMask value="#{alunoController.objeto.cpf}" mask="999.999.999-99"/>
+
+									<p:outputLabel value="Naturalidade" />
+									<p:inputText value="#{alunoController.objeto.natural}" />
+
+								</p:panelGrid>
+
+								<h1>Endereço</h1>
+								<p:panelGrid columns="4">
+									<p:outputLabel value="Logradouro(Rua/Av)" />
+									<p:inputText value="#{alunoController.objeto.logradouro}"
+										size="50" />
+
+									<p:outputLabel value="Numero" />
+									<p:inputText value="#{alunoController.objeto.numero}" />
+
+									<p:outputLabel value="Complemento" />
+									<p:inputText value="#{alunoController.objeto.complemento}"
+										size="50" />
+
+									<p:outputLabel value="Bairro" />
+									<p:inputText value="#{alunoController.objeto.bairro}" />
+
+									<p:outputLabel value="Cidade" />
+									<p:inputText value="#{alunoController.objeto.cidade}" />
+
+									<p:outputLabel value="CEP" />
+									<p:inputText value="#{alunoController.objeto.cep}" />
+
+									<p:outputLabel value="Telefone" />
+									<p:inputText value="#{alunoController.objeto.fone}" />
+
+
+								</p:panelGrid>
+
+							</p:outputPanel>
+						</p:tab>
+
+						<p:tab title="Filiação">
+							<p:outputPanel rendered="#{not empty alunoController.objeto}">
+								<p:panelGrid columns="4" id="pnlGrid">
+									<p:outputLabel value="Nome do Pai" />
+									<p:inputText value="#{alunoController.objeto.nome_pai}"
+										size="50" />
+
+									<p:outputLabel value="Nome da Mãe" />
+									<p:inputText value="#{alunoController.objeto.nome_mae}" />
+
+									<p:outputLabel value="Casa Propria" />
+									<p:selectOneMenu value="#{alunoController.objeto.casa_propria}">
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{alunoController.simNao}"
+											var="alunoVar" itemValue="#{alunoVar}" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="QTD Familia" />
+									<p:inputText value="#{alunoController.objeto.qto_familia}" />
+
+									<p:outputLabel value="QTD de menores" />
+									<p:inputText
+										value="#{alunoController.objeto.qto_familia_menores}" />
+
+									<p:outputLabel value="QTD de maiores" />
+									<p:inputText
+										value="#{alunoController.objeto.qto_familia_maiores}" />
+
+									<p:outputLabel value="Pai Separado" />
+									<p:selectOneMenu value="#{alunoController.objeto.pai_separado}">
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{alunoController.simNao}"
+											var="alunoVar" itemValue="#{alunoVar}" />
+										<p:ajax event="change" process="@this" update="pnlGrid" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="Dias de visita"
+										rendered="#{alunoController.objeto.pai_separado == 'S'}" />
+									<p:inputText value="#{alunoController.objeto.dia_visita}"
+										rendered="#{alunoController.objeto.pai_separado == 'S'}" />
+
+									<p:outputLabel value="Nome da Escola" />
+									<p:inputText value="#{alunoController.objeto.nome_escola}" />
+
+									<p:outputLabel value="Ano Cursando" />
+									<p:inputText value="#{alunoController.objeto.ano_cursando}" />
+
+									<p:outputLabel value="Turma" />
+									<p:inputText value="#{alunoController.objeto.turma}" />
+
+									<p:outputLabel value="Turno" />
+									<p:inputText value="#{alunoController.objeto.turno_2}" />
+
+									<p:outputLabel value="Beneficio" />
+									<p:inputText value="#{alunoController.objeto.beneficio}" />
+
+									<p:outputLabel value="NIS" />
+									<p:inputText value="#{alunoController.objeto.nis}" />
+
+									<p:outputLabel value="Raça Cor" />
+									<p:inputText value="#{alunoController.objeto.raca_cor}" />
+
+									<p:outputLabel value="Nis do Aluno" />
+									<p:inputText value="#{alunoController.objeto.nis_aluno}" />
+
+									<p:outputLabel value="Saude ESF" />
+									<p:inputText value="#{alunoController.objeto.saude_esf}" />
+
+									<p:outputLabel value="CRAS Ref." />
+									<p:inputText value="#{alunoController.objeto.cras_ref}" />
+
+									<p:outputLabel value="Curso Pretendido" />
+									<p:inputText value="#{alunoController.objeto.curso_pretendido}" />
+
+									<p:outputLabel value="Obs Filiação" />
+									<p:inputTextarea value="#{alunoController.objeto.obs_filiacao}" />
+
+
+								</p:panelGrid>
+
+
+							</p:outputPanel>
+						</p:tab>
+
+						<p:tab title="Medicamentos e Comportamento">
+							<p:outputPanel rendered="#{not empty alunoController.objeto}">
+								<p:panelGrid columns="4" id="pnlGrid2">
+
+									<p:outputLabel value="Medicação" />
+									<p:selectOneMenu value="#{alunoController.objeto.medicacao}">
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{alunoController.simNao}"
+											var="alunoVar" itemValue="#{alunoVar}" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="Alergia" />
+									<p:selectOneMenu value="#{alunoController.objeto.alergia}">
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{alunoController.simNao}"
+											var="alunoVar" itemValue="#{alunoVar}" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="Comportamento em Casa" />
+									<p:inputText
+										value="#{alunoController.objeto.comportamento_casa}" />
+
+									<p:outputLabel value="Comportamento no Colegio" />
+									<p:inputText
+										value="#{alunoController.objeto.comportamento_escola}" />
+
+									<p:outputLabel value="Media Escolar" />
+									<p:inputText value="#{alunoController.objeto.media_escolar}" />
+
+									<p:outputLabel value="Prioritario" />
+									<p:selectOneMenu value="#{alunoController.objeto.prioritario}">
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{alunoController.simNao}"
+											var="alunoVar" itemValue="#{alunoVar}" />
+										<p:ajax event="change" process="@this" update="pnlGrid" />
+									</p:selectOneMenu>
+
+								</p:panelGrid>
+
+
+							</p:outputPanel>
+						</p:tab>
+
+						<p:tab title="Autorização">
+							<p:outputPanel rendered="#{not empty alunoController.objeto}">
+								<h1>Dados do Pai</h1>
+								<p:panelGrid columns="4" id="pnlGrid4">
+
+
+									<p:outputLabel value="RG" />
+									<p:inputText value="#{alunoController.objeto.rg_pai}" />
+
+									<p:outputLabel value="Natural" />
+									<p:inputText value="#{alunoController.objeto.natural_pai}" />
+
+
+									<p:outputLabel value="UF Titulo" />
+									<p:inputText value="#{alunoController.objeto.uf_titulo_pai}" />
+
+									<p:outputLabel value="CPF" />
+									<p:inputMask value="#{alunoController.objeto.cpf_pai}" mask="999.999.999-99"/>
+
+									<p:outputLabel value="Titulo Eleitoral" />
+									<p:inputText value="#{alunoController.objeto.titulo_pai}" />
+
+									<p:outputLabel value="Municipio Votação" />
+									<p:inputText value="#{alunoController.objeto.municipio_pai}" />
+
+									<p:outputLabel value="UF" />
+									<p:inputText value="#{alunoController.objeto.uf_pai}" />
+
+									<p:outputLabel value="Data Emissão" />
+									<p:calendar pattern="dd/MM/yyyy" mask="99/99/9999"
+										value="#{alunoController.objeto.data_emissao_titulo_pai}"/>
+
+									<p:outputLabel value="Local de Trabalho" />
+									<p:inputText value="#{alunoController.objeto.local_trab_pai}" />
+
+									<p:outputLabel value="Telefone" />
+									<p:inputText value="#{alunoController.objeto.fone_pai}" />
+
+
+								</p:panelGrid>
+
+								<h1>Dados da Mãe</h1>
+								<p:panelGrid columns="4" id="pnlGrid5">
+
+
+									<p:outputLabel value="RG" />
+									<p:inputText value="#{alunoController.objeto.rg_mae}" />
+
+									<p:outputLabel value="Natural" />
+									<p:inputText value="#{alunoController.objeto.natural_mae}" />
+
+
+									<p:outputLabel value="UF Titulo" />
+									<p:inputText value="#{alunoController.objeto.uf_titulo_mae}" />
+
+									<p:outputLabel value="CPF" />
+									<p:inputMask value="#{alunoController.objeto.cpf_mae}" mask="999.999.999-99"/>									
+
+									<p:outputLabel value="Titulo Eleitoral" />
+									<p:inputText value="#{alunoController.objeto.titulo_mae}" />
+
+									<p:outputLabel value="Municipio Votação" />
+									<p:inputText value="#{alunoController.objeto.municipio_mae}" />
+
+									<p:outputLabel value="UF" />
+									<p:inputText value="#{alunoController.objeto.uf_mae}" />
+
+									<p:outputLabel value="Data Emissão" />
+									<p:calendar pattern="dd/MM/yyyy" mask="99/99/9999"
+										value="#{alunoController.objeto.data_emissao_titulo_mae}" />
+
+									<p:outputLabel value="Local de Trabalho" />
+									<p:inputText value="#{alunoController.objeto.local_trab_mae}" />
+
+									<p:outputLabel value="Telefone" />
+									<p:inputText value="#{alunoController.objeto.fone_mae}" />
+
+
+								</p:panelGrid>
+
+
+							</p:outputPanel>
+						</p:tab>
+
+						<p:tab title="Fotos/Documentos" id="fotoDocumento">
+							<p:outputLabel value="Imagem"  />
+			                <p:commandButton title="Selecionar Imagem"
+			                                 value="Selecionar Imagem" oncomplete="PF('dialogUpload').show()"
+			                                 update=":formUpload:panelUpload" 
+			                                 disabled="#{alunoController.objeto.id == null}" />
+			                
+			                <br /> <br />
+			                
+			                 
+			                <p:dataTable id="lancamentosTable"
+										value="#{alunoController.objeto.listaImagem}" var="imagem"
+										reflow="true" paginator="true" rows="1" paginatorAlwaysVisible="true"
+										paginatorPosition="bottom" 									
+																
+										rowsPerPageTemplate="1,5,10,15,20" 
+										selection="#{alunoController.imagemSelecionada}"
+										selectionMode="single" rowKey="#{imagem.id}">
+							
+							
+							<f:facet name="header">								
+								
+								<p:commandButton process="lancamentosTable" title="Excluir"
+									icon="ui-icon-trash" update="lancamentosTable"
+									actionListener="#{alunoController.excluirImagem}">
+									<p:confirm header="Confirmação" message="Confirma Exclusão?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+			
+							</f:facet>
+							
+				                <p:column headerText="Foto" >
+									 <img  src="#{imagem.caminho}" style="width:50%"  />
+								</p:column>	
+																
+			                </p:dataTable>
+						</p:tab>
+
+					</p:tabView>
+					<p:spacer />
+					<p:outputPanel rendered="#{not empty alunoController.objeto}"
+						styleClass="t2ti-campo-100">
+
+						<p:commandButton value="Incluir"
+							rendered="#{empty alunoController.objeto.id}"
+							actionListener="#{alunoController.salvar()}"
+							update=":form1:growl,:form1:outputPanelGrid,:form1:outputPanelDetalhe"
+							disabled="#{!alunoController.podeInserir()}" />
+						<p:commandButton value="Alterar"
+							rendered="#{not empty alunoController.objeto.id}"
+							actionListener="#{alunoController.salvar()}"
+							update=":form1:growl,:form1:outputPanelGrid,:form1:outputPanelDetalhe"
+							disabled="#{!alunoController.podeAlterar()}" />
+						<p:commandButton value="Fechar"
+							actionListener="#{alunoController.voltar()}"
+							update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"
+							process="@this" />
+
+					</p:outputPanel>
+				</p:panel>
+			</p:outputPanel>
+
+		</p:outputPanel>
+
+	</ui:define>
+
+	<ui:define name="outrasTelas">
+		 <h:form id="formUpload" enctype="multipart/form-data">
+            <p:dialog id="dialogUpload" header="Upload Imagem"
+                      widgetVar="dialogUpload" showEffect="slide" hideEffect="slide"
+                      resizable="true" modal="true" closable="false" width="800">
+                <p:outputPanel id="panelUpload" >
+                    <div class="t2ti-campo-100">
+                        <p:fileUpload
+                            fileUploadListener="#{alunoController.uploadImagem}"
+                            mode="advanced" fileLimit="1"
+                            allowTypes="/(\.|\/)(gif|jpe?g|png)$/" update=":form1:growl" />
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                	
+                	<p:commandButton value="Salvar"
+                                     actionListener="#{alunoController.salvarImagem()}" 
+                                     oncomplete="PF('dialogUpload').hide();" process="@this"
+                                     update=":form1:outputPanelGrid,:form1:outputPanelDetalhe"/>                                                                       	
+                                     
+                	
+                    <p:commandButton value="Fechar" update=":form1"
+                                     oncomplete="PF('dialogUpload').hide();" process="@this" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+	</ui:define>
+</ui:composition>
